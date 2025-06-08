@@ -18,7 +18,7 @@ type Props = BottomTabScreenProps<RootTabParamList, 'RangeSliderStack'>;
 export default function RangeSliderStackNavigator(): ReactElement<Props> {
   const dispatch = useAppDispatch();
   const index: number = useAppSelector(state =>
-    selectNavIndex(state, {name: 'RangeSliderNav'}),
+    selectNavIndex(state, {name: 'RangeSliderNav'})
   );
   const color: string = useAppSelector(state => selectColor(state, {index}));
   const lightColor: string = useAppSelector(state =>

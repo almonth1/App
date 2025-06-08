@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import base64 from 'react-native-base64';
 import {
   BleError,
@@ -8,7 +9,10 @@ import {
 } from 'react-native-ble-plx';
 
 const DEVICE_UUID = '0000FFE0-0000-1000-8000-00805F9B34FB';
-const CHARACTERISTIC_UUID = '0000FFE1-0000-1000-8000-00805F9B34FB';
+// const CHARACTERISTIC_UUID = '0000FFE1-0000-1000-8000-00805F9B34FB';
+const Service_UUID = '00001801-0000-1000-8000-00805f9b34fb';
+const CHARACTERISTIC_UUID = 'b23cca98-2545-4842-a5af-0fc3550aadb1';
+
 
 class BluetoothManager {
   bleManager: BleManager;
@@ -20,14 +24,55 @@ class BluetoothManager {
     this.device = null;
     this.subscription = undefined;
   }
-
+  
+   scanForDevices1 = () => {    
+    console.log('scanning for devices');
+    //not entering this function, issue with the bleManager?
+    this.bleManager.startDeviceScan(null, null, (error, scannedDevice) => {
+      if (error) {
+        console.log('error', error);
+        return;
+      }
+      console.log('scanning...')
+      if (scannedDevice?.name === 'ODK - Oasis Development Kit') { 
+        // Stop scanning as it's not necessary if you are scanning for one device. 
+  
+        this.connectToDevice(scannedDevice.id);
+        this.bleManager.stopDeviceScan(); 
+   
+        // Proceed with connection. 
+      } 
+      console.log(scannedDevice?.name);
+    });
+  };
+  
+  checkBluetoothstate = () => {
+    this.bleManager.onStateChange(state => {
+          if (state === 'PoweredOn') {
+            console.log('Bluetooth is powered on');
+            this.scanForDevices1();
+            this.readCharacteristic();
+                  } else{
+            console.log('Bluetooth is not powered on');
+          }
+        }, true)
+       
+  }
+ 
   scanForDevices = (
     onDeviceFound: (arg: {
       type: string;
       payload: BleError | Device | null;
     }) => void,
   ) => {
+    console.log('scanning for devices');
+    //not entering this function, issue with the bleManager?
     this.bleManager.startDeviceScan(null, null, (error, scannedDevice) => {
+      if (error) {
+        console.log('error', error);
+        return;
+      }
+      console.log('scanning...')
       onDeviceFound({type: 'SAMPLE', payload: scannedDevice ?? error});
       return;
     });
@@ -41,8 +86,42 @@ class BluetoothManager {
   };
 
   connectToDevice = async (deviceId: string) => {
-    this.device = await this.bleManager.connectToDevice(deviceId);
+    try {
+      const connectedDevice = await this.bleManager.connectToDevice(deviceId);
+      if (connectedDevice) {
+        console.log('connected to device', connectedDevice.name);
+        await connectedDevice.discoverAllServicesAndCharacteristics();
+        this.device = connectedDevice;
+      } else {
+        console.error('Failed to connect: Device is undefined');
+        this.device = null;
+      }
+    } catch (error) {
+      console.error('Failed to connect to device:', error);
+      this.device = null;
+    }
   };
+
+  readCharacteristic = async () => { 
+    try{
+    
+    if(this.device){
+    const readData = await this.bleManager.readCharacteristicForDevice( 
+    
+    this.device?.id, Service_UUID, CHARACTERISTIC_UUID).then(readData=>{ 
+    
+    console.log('Data Read from the BLE device:', readData) 
+    
+    })
+  }
+  else{
+    console.log('Error while reading data from BLE device: device is undefined',)
+  }
+} catch(error) { 
+      console.error('Failed to connect to device:', error);
+      this.device = null;
+    }
+    } 
 
   disconnectFromDevice = async (deviceId: string) => {
     this.device = await this.bleManager.cancelDeviceConnection(deviceId);

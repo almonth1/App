@@ -27,6 +27,7 @@ import {
   selectAvailableDevices,
   selectConnectedDevice,
 } from '../../slices/bluetoothSlice';
+import bluetoothManager from '../../scripts/bluetoothManager';
 import {TAbstractDevice} from '../../scripts/types';
 
 type Props = NativeStackScreenProps<HomeParamList, 'HomeScreen'>;
@@ -55,6 +56,12 @@ export default function HomeScreen({navigation}: Props): ReactElement<Props> {
     setModalVisible(false);
   };
 
+const exampleDevice: TAbstractDevice = {
+  name: 'My Bluetooth Device',
+  id: 'device-123',
+  serviceUUIDs: ['1234abcd-0000-1000-8000-00805f9b34fb', '5678efgh-0000-1000-8000-00805f9b34fb'],
+};
+  
   return (
     <View style={globalStyles.screen}>
       <View style={[globalStyles.page, styles.pageContainer, pageContrast]}>
@@ -96,7 +103,9 @@ export default function HomeScreen({navigation}: Props): ReactElement<Props> {
               <Button
                 onPress={() => {
                   dispatch(requestPermissions());
-                  dispatch(scanForDevices());
+                  bluetoothManager.checkBluetoothstate();
+                  //dispatch(scanForDevices());
+                  console.log('Available Devices:', availableDevices);
                   setModalVisible(true);
                 }}>
                 <Text style={styles.buttonText}>Connect</Text>
@@ -108,7 +117,7 @@ export default function HomeScreen({navigation}: Props): ReactElement<Props> {
       <DeviceModal
         closeModal={closeModal}
         visible={isModalVisible}
-        devices={availableDevices}
+        devices={[exampleDevice,exampleDevice, exampleDevice]}
         connectToDevice={connectToDevice}
       />
     </View>
