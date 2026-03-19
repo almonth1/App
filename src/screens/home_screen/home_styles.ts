@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import { buffers } from 'redux-saga';
 
 export const styles = StyleSheet.create({
   pageContainer: {
@@ -31,22 +32,26 @@ export const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
   },
-  buttonPanel: {
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    boxSizing: 'border-box',
-    height: '25%',
-    width: '100%',
-    paddingHorizontal: 15,
-    backgroundColor: '#fff',
-  },
-  buttonContainer: {
-    height: '35%',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 100,
-  },
+buttonPanel: {
+  alignItems: 'center',
+  justifyContent: 'center', // change from 'space-evenly'
+  boxSizing: 'border-box',
+  // height: '25%', // ← REMOVE THIS
+  width: '100%',
+  paddingHorizontal: 15,
+  paddingVertical: 20,
+  backgroundColor: '#fff',
+},
+
+buttonContainer: {
+  minHeight: 60,
+  width: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 100,
+  paddingVertical: 0,
+  marginVertical: 4, // small spacing between buttons
+},
   active: {
     backgroundColor: '#d95448',
   },
@@ -55,7 +60,7 @@ export const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: 'bold',
   },
   modalButtonContainer: {

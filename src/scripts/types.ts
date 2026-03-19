@@ -87,7 +87,7 @@ export type TReading = {
   isSafe: boolean;
   hasSynced: boolean;
   measurements: TMeasurement[];
-  timeIntervals?: number[];
+  timeIntervals?: number; // in milliseconds
 };
 
 export type TNews = {
@@ -119,4 +119,14 @@ export type TBluetoothSliceState = {
   permissionsGranted: boolean;
   waitingForResponse: boolean;
   receivedData: any | null;
+};
+
+export type DeviceData = {
+  battery: string;
+  gpsLat: string;
+  gpsLon: string;
+  gpsTime: string;
+  gpsDate: string;
+  analogCh0: number;
+  analogCh1: number;
 };

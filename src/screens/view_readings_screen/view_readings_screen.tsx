@@ -1,4 +1,4 @@
-import React, {useCallback, ReactElement} from 'react';
+import React, {useCallback, ReactElement, useMemo} from 'react';
 import {View, Text, ScrollView, Dimensions} from 'react-native';
 import {BarChart, LineChart, PieChart} from 'react-native-chart-kit';
 import {useFocusEffect} from '@react-navigation/native';
@@ -42,10 +42,11 @@ export default function ViewReadingsScreen({
   const isDarkMode = useAppSelector(selectDarkMode);
 
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
-  const reading: TReading = useAppSelector(state =>
-    selectReadingById(state, {id: route.params.readingId}),
-  );
+  // const reading: TReading = useAppSelector(state =>
+  //   selectReadingById(state, {id: route.params.readingId}),
+  // );
 
+  const deviceData = useAppSelector(state=> state.device);
   const unsyncedReadings = useAppSelector(selectUnsyncedReadings);
   const dispatch = useAppDispatch();
 
@@ -63,12 +64,33 @@ export default function ViewReadingsScreen({
     ],
   });
 
+  // create a reading object from the device data
+  // Note: The id is hardcoded for now, it should be generated dynamically in a real application
+  const reading = useMemo(() => ({
+    id: `${deviceData.name}-${deviceData.gpsDate}-${deviceData.gpsTime}`,
+    datetime: { date: deviceData.gpsDate, time: deviceData.gpsTime },
+    location: { latitude: Number(deviceData.gpsLat), longitude: Number(deviceData.gpsLon) },
+    measurements: [
+      {
+        name: deviceData.sensorName0,
+        value: deviceData.analogCh0,
+      },
+      {
+        name: deviceData.sensorName1,
+        value: deviceData.analogCh1,
+      },
+    ],
+    isSafe: true,
+    hasSynced: false,
+    timeIntervals: deviceData.updateRate,
+  }), [deviceData]);
+
   useFocusEffect(
     useCallback(() => {
       if (!route.params.validNavigation) {
         navigation.popToTop();
       }
-      route.params.validNavigation = false;
+      navigation.setParams({ validNavigation: false });
     }, [navigation, route.params]),
   );
 
@@ -196,7 +218,7 @@ export default function ViewReadingsScreen({
 
         setPieChartData(getPieChartData(measurements));
         setBarChartData(getBarChartData(measurements));
-        setLineChartData(getLineChartData(measurements, reading.timeIntervals));
+        setLineChartData(getLineChartData(measurements, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])); // Mocked time intervals for demonstration purposes
       }
     }, [reading]),
   );

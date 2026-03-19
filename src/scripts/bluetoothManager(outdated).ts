@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import base64 from 'react-native-base64';
 import {
   BleError,
@@ -7,6 +7,7 @@ import {
   Device,
   Subscription,
 } from 'react-native-ble-plx';
+import { TAbstractDevice } from './types';
 
 const DEVICE_UUID = '0000FFE0-0000-1000-8000-00805F9B34FB';
 // const CHARACTERISTIC_UUID = '0000FFE1-0000-1000-8000-00805F9B34FB';
@@ -25,39 +26,7 @@ class BluetoothManager {
     this.subscription = undefined;
   }
   
-   scanForDevices1 = () => {    
-    console.log('scanning for devices');
-    //not entering this function, issue with the bleManager?
-    this.bleManager.startDeviceScan(null, null, (error, scannedDevice) => {
-      if (error) {
-        console.log('error', error);
-        return;
-      }
-      console.log('scanning...')
-      if (scannedDevice?.name === 'ODK - Oasis Development Kit') { 
-        // Stop scanning as it's not necessary if you are scanning for one device. 
-  
-        this.connectToDevice(scannedDevice.id);
-        this.bleManager.stopDeviceScan(); 
-   
-        // Proceed with connection. 
-      } 
-      console.log(scannedDevice?.name);
-    });
-  };
-  
-  checkBluetoothstate = () => {
-    this.bleManager.onStateChange(state => {
-          if (state === 'PoweredOn') {
-            console.log('Bluetooth is powered on');
-            this.scanForDevices1();
-            this.readCharacteristic();
-                  } else{
-            console.log('Bluetooth is not powered on');
-          }
-        }, true)
-       
-  }
+
  
   scanForDevices = (
     onDeviceFound: (arg: {
@@ -188,7 +157,7 @@ class BluetoothManager {
   };
 
   stopReadingData = async () => {
-    await this.subscription?.remove();
+     this.subscription?.remove();
   };
 }
 

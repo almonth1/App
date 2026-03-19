@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   useColorScheme,
+  View,
 } from 'react-native';
 import DeviceModalListItem from './modalItem';
 
@@ -59,10 +60,22 @@ export default function DeviceModal(
         onPress={closeModal}
       />
       <SafeAreaView
-        style={[styles.modalContent, containerContrast, globalStyles.tile]}>
+        style={[
+          { flex: 1 },
+          styles.modalContent, 
+          containerContrast, 
+          globalStyles.tile
+          ]}>
         <Text style={[styles.modalTitleText, textContrast, containerContrast]}>
           Tap on a device to connect
         </Text>
+        <View
+          style={{
+          height: 1,          
+          backgroundColor: 'black',  
+          marginVertical: 5, 
+          }}
+          />
         <FlatList
           contentContainerStyle={styles.modalFlatlistContiner}
           data={devices}
