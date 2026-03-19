@@ -11,7 +11,9 @@ import readingsReducer from '../slices/readingsSlice';
 import newsReducer from '../slices/newsSlice';
 import bluetoothReducer from '../slices/bluetoothSlice';
 
-import {bluetoothSaga} from './bluetoothSaga';
+import {bluetoothSaga} from './bluetoothSaga(Outdated)';
+
+import deviceReducer from '../slices/deviceSlice';
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -27,6 +29,7 @@ export const store = configureStore({
     readings: readingsReducer,
     news: newsReducer,
     bluetooth: bluetoothReducer,
+    device: deviceReducer,
   },
   middleware: getDefaultMiddleware => {
     return getDefaultMiddleware().concat(sagaMiddleware);
@@ -37,3 +40,4 @@ sagaMiddleware.run(rootSaga);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export default store;

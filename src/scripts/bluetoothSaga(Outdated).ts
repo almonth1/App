@@ -3,7 +3,7 @@ import {AnyAction} from 'redux';
 import {END, eventChannel, TakeableChannel} from 'redux-saga';
 import {call, put, take, takeEvery} from 'redux-saga/effects';
 import {sagaActionConstants} from '../slices/bluetoothSlice';
-import bluetoothManager from './bluetoothManager';
+import bluetoothManager from './bluetoothManager(outdated)';
 
 type TakeableDevice = {
   payload: {id: string; name: string; serviceUUIDs: string};

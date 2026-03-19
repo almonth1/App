@@ -1,4 +1,4 @@
-import React, {ReactElement, useCallback} from 'react';
+import React, {ReactElement, useCallback, useEffect, useState} from 'react';
 import {View, Text, ScrollView} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {ReadingsParamList} from '../../scripts/screen_params';
@@ -26,6 +26,8 @@ import {
   postAllReadings,
   emptySyncedReadings,
 } from '../../slices/readingsSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../scripts/store';
 
 type Props = NativeStackScreenProps<ReadingsParamList, 'ReadingsScreen'>;
 
@@ -36,6 +38,7 @@ export default function ReadingsScreen({
   const pageContrast = useAppSelector(selectPageContrast);
   const textContrast = useAppSelector(selectTextContrast);
   const containerContrast = useAppSelector(selectContainerContrast);
+  const deviceData = useAppSelector(state=> state.device);
 
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
 
@@ -93,8 +96,8 @@ export default function ReadingsScreen({
                 isIcon={false}
                 highLight={reading.isSafe}
                 title={'Reading ' + reading.id}
-                subtitle1={`Latitude: ${reading?.location?.latitude}, Longitude: ${reading?.location?.longitude}`}
-                subtitle2={`Date: ${reading.datetime.date}, Time: ${reading.datetime.time}`}
+                subtitle1={`Latitude: ${deviceData.gpsLat}, Longitude: ${deviceData.gpsLon}`}
+                subtitle2={`Date: ${deviceData.gpsDate}, Time: ${deviceData.gpsTime}`}
                 onPress={() =>
                   navigation.navigate('ViewReadingScreen', {
                     validNavigation: true,
@@ -111,6 +114,18 @@ export default function ReadingsScreen({
               </Card>
             );
           })}
+        <Card
+              isIcon={false}
+              highLight={true}
+              title={'Reading: ' + deviceData.name}
+              subtitle1={`Latitude: ${deviceData.gpsLat} \nLongitude: ${deviceData.gpsLon}`}
+              subtitle2={`Time: ${deviceData.gpsTime} ${deviceData.gpsDate} `}
+              onPress={() =>
+                    navigation.navigate('ViewReadingScreen', {
+                      validNavigation: true,
+                    })
+                  }>
+        </Card>
       </ScrollView>
     </View>
   );

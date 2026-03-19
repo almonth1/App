@@ -246,8 +246,11 @@ const bluetoothReducer = createSlice({
       const isDuplicate = state.availableDevices.some(
         device => device.id === action.payload.id,
       );
-      const isCorrectDevice = action.payload?.name?.includes(DEVICE_NAME);
-      if (!isDuplicate && isCorrectDevice) {
+      // const isCorrectDevice = action.payload?.name?.includes(DEVICE_NAME);
+      // if (!isDuplicate && isCorrectDevice) {
+      //   state.availableDevices = state.availableDevices.concat(action.payload);
+      // }
+      if (!isDuplicate) {
         state.availableDevices = state.availableDevices.concat(action.payload);
       }
     },
